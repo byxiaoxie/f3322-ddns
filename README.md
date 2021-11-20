@@ -5,3 +5,5 @@ Edit [f3322.py]
 Change [domainname,username,password]
 
 Run python3 f3322.py
+
+Update DDNS every 60 seconds.
