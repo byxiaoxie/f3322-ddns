@@ -4,6 +4,7 @@
 # Update Log:
 # 2021-11-23 05:26:56 - Fix stack overflow.
 # 2021-11-24 10:39:53 - Change to two minute update.
+# 2021-11-24 11:23:14 - Add getip url.
 #
 # ByXiaoXie   Www.ByXiaoXie.Com
 
@@ -26,11 +27,6 @@ headers = {
 'User-Agent': 'myclient/1.0 me@null.net',
 }
 
-headers_ip = {
-'Host': 'ip.3322.net',
-'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
-}
-
 def print_log(str):
     if not str.strip():
         return
@@ -41,13 +37,15 @@ def print_log(str):
     with open("f3322.log","a") as file:
             file.write(now + "：" + str + "\n")
 
-def GetIp():
+def GetIp(mod):
     try:
-        req = request.Request("http://ip.3322.net",headers=headers_ip)
+        if mod:
+            req = request.Request("http://ipinfo.io/ip")
+        else:
+            req = request.Request("http://ip.3322.net")
         conn = request.urlopen(req).read().decode('GBK')
         ipaddr = re.search('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',conn)
         ipaddress = ipaddr.group()
-        #print_log("IP:",ipaddress)
         return ipaddress
     except:
         print_log("Get IP Time Out!")
@@ -56,12 +54,17 @@ def GetIp():
 def UpdateIP():
     try:
         while True:
-            ipaddress = GetIp()
+            BoolGetIp = True
+            ipaddress = GetIp(BoolGetIp)
             if ipaddress != "":
                 break
             else:
+                if BoolGetIp:
+                    BoolGetIp = False
+                else:
+                    BoolGetIp = True
                 time.sleep(5)
-                ipaddress = GetIp()
+                ipaddress = GetIp(BoolGetIp)
 
         url = "http://members.3322.net/dyndns/update?hostname=" + domainname + "&myip=" + ipaddress + "&wildcard=OFF&mx=mail.exchanger.ext&backmx=NO&offline=NO"
         req = request.Request(url,headers=headers)
