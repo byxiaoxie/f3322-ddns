@@ -3,6 +3,7 @@
 #
 # Update Log:
 # 2021-11-23 05:26:56 - Fix stack overflow.
+# 2021-11-24 10:39:53 - Change to two minute update.
 #
 # ByXiaoXie   Www.ByXiaoXie.Com
 
@@ -25,6 +26,11 @@ headers = {
 'User-Agent': 'myclient/1.0 me@null.net',
 }
 
+headers_ip = {
+'Host': 'ip.3322.net',
+'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
+}
+
 def print_log(str):
     if not str.strip():
         return
@@ -37,10 +43,9 @@ def print_log(str):
 
 def GetIp():
     try:
-        conn = request.urlopen("http://www.f3322.org/dyndns/getip",timeout=10)
-        reip = conn.read()
-        reip = reip.decode('GBK')
-        ipaddr = re.search('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',reip)
+        req = request.Request("http://ip.3322.net",headers=headers_ip)
+        conn = request.urlopen(req).read().decode('GBK')
+        ipaddr = re.search('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',conn)
         ipaddress = ipaddr.group()
         #print_log("IP:",ipaddress)
         return ipaddress
@@ -71,4 +76,4 @@ def UpdateIP():
 if __name__ == "__main__":
     while True:
         UpdateIP()
-        time.sleep(60)
+        time.sleep(120)
